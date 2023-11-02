@@ -12,79 +12,64 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ChirpTest {
     private UserRepository usersList;
-    private User user;
+    private User user0,user1,user2;
     private Chirp chirp;
 
     @BeforeEach
     public void setUp() {
         usersList = new UserRepository();
-        usersList.addUser("UID1", "Auteur", new Date());
-        user = usersList.getUserById("UID1");
-        chirp = new Chirp(1,user,"Contenu du chirp",LocalDateTime.now());
+        usersList.addUser("UID0", "Author", new Date());
+        usersList.addUser("UID1", "User1", new Date());
+        usersList.addUser("UID2", "User2", new Date());
+
+        user0 = usersList.getUserById("UID0");
+        user1 = usersList.getUserById("UID1");
+        user2 = usersList.getUserById("UID2");
+        chirp = user0.publishChirp(1,"Contenu du chirp");
     }
 
     @Test
     public void testRepostOwnChirp() {
         // L'auteur essaye de republier son propre chirp
         assertThrows(IllegalArgumentException.class, () -> {
-            user.repostChirp(chirp);
+            user0.repostChirp(chirp);
         });
     }
+    @Test
+    public void testLikeSameChirpMultipleTimes() {
+        // Author aime le chirp
+        assertEquals(1, chirp.getLikeCount());
+        // User 1 aime le chirp
+        chirp.like(user1);
+        assertEquals(2, chirp.getLikeCount());
+        // User 1 tente d'aimer le même chirp à nouveau
+        assertThrows(IllegalArgumentException.class, () -> {
+            chirp.like(user1);
+        });
+        // User 2 aime le chirp
+        chirp.like(user2);
+        assertEquals(3, chirp.getLikeCount());
+    }
+    @Test
+    public void testRepostSameChirpMultipleTimes() {
+        // User 1 republie le chirp
+        chirp.repost(user1);
+        assertEquals(1, chirp.getRepostCount());
+        // User 1 tente de re-publier le même chirp à nouveau
+        assertThrows(IllegalArgumentException.class, () -> {
+            chirp.repost(user1);
+        });
+        // L'utilisateur 2 re-publie le chirp
+        chirp.repost(user2);
+        assertEquals(2, chirp.getRepostCount());
+    }
+    @Test
+    public void testNegativeRepostCount() {
 
-//    @Test
-//    public void testLikeSameChirpMultipleTimes() {
-//        User user1 = new User("UID2", "Utilisateur1");
-//        User user2 = new User("UID3", "Utilisateur2");
-//
-//        // L'auteur aime le chirp initialement
-//        assertEquals(1, chirp.getLikeCount());
-//
-//        // L'utilisateur 1 aime le chirp
-//        chirp.like(user1);
-//        assertEquals(2, chirp.getLikeCount());
-//
-//        // L'utilisateur 1 tente d'aimer le même chirp à nouveau
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            chirp.like(user1);
-//        });
-//
-//        // L'utilisateur 2 aime le chirp
-//        chirp.like(user2);
-//        assertEquals(3, chirp.getLikeCount());
-//    }
-//
-//    @Test
-//    public void testRepostSameChirpMultipleTimes() {
-//        User user1 = new User("UID2", "Utilisateur1");
-//        User user2 = new User("UID3", "Utilisateur2");
-//
-//        // L'utilisateur 1 re-publie le chirp
-//        chirp.repost(user1);
-//        assertEquals(1, chirp.getRepostCount());
-//
-//        // L'utilisateur 1 tente de re-publier le même chirp à nouveau
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            chirp.repost(user1);
-//        });
-//
-//        // L'utilisateur 2 re-publie le chirp
-//        chirp.repost(user2);
-//        assertEquals(2, chirp.getRepostCount());
-//    }
-//
-//    @Test
-//    public void testNegativeRepostCount() {
-//        User user1 = new User("UID2", "Utilisateur1");
-//
-//        // L'utilisateur 1 re-publie le chirp
-//        chirp.repost(user1);
-//        assertEquals(1, chirp.getRepostCount());
-//
-//        // L'utilisateur 1 tente de dé-republier (un-repost) le chirp (ce n'est pas possible)
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            chirp.unrepost(user1);
-//        });
-//
-//        assertEquals(1, chirp.getRepostCount());
-//    }
+        // User1 tente de un-reposter le chirp
+        assertThrows(IllegalArgumentException.class, () -> {
+            chirp.unrepost(user1);
+        });
+        assertEquals(0, chirp.getRepostCount());
+    }
 }

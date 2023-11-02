@@ -51,16 +51,19 @@ public class User {
             throw new IllegalArgumentException("Un utilisateur ne peut se désabonné d'une personne si elle n'est pas dans sa liste d'abonnés");
         }
     }
-    public void publishChirp (int chirpID, String content) {
+    public Chirp publishChirp (int chirpID, String content) {
         if (isContentValid(content)){
             Chirp chirp = new Chirp(chirpID,this,content, LocalDateTime.now());
             this.getChirpsList().add(chirp);
+            return chirp;
+        } else {
+            throw new IllegalArgumentException("Contenue du chirp est invalide.");
         }
     }
     public void repostChirp (Chirp chirp) {
         if (!this.getChirpsList().contains((chirp))) {
             chirp.repost(this);
-        }else {
+        } else {
             throw new IllegalArgumentException(" Un utilisateur ne peut pas re-publier son propre chirp.");
         }
     }

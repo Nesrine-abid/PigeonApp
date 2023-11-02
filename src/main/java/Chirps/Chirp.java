@@ -14,7 +14,6 @@ public class Chirp {
     private List<User> likedBy;
     private int repostCount;
     private List<User> repostedBy;
-
     public Chirp(int chirpId, User author, String content, LocalDateTime publicationDateTime) {
         this.chirpId = chirpId;
         this.author = author;
@@ -26,10 +25,18 @@ public class Chirp {
         this.repostCount = 0;
         this.repostedBy = new ArrayList<>();
     }
+    public int getLikeCount() {
+        return likeCount;
+    }
+    public int getRepostCount() {
+        return repostCount;
+    }
     public void like(User user) {
         if (!likedBy.contains(user)) {
             likedBy.add(user);
             likeCount++;
+        }else {
+            throw new IllegalArgumentException(" Le user ne peut pas liker plusieurs fois par le même chirp.");
         }
     }
     public void unlike(User user) {
@@ -42,14 +49,16 @@ public class Chirp {
         if (!repostedBy.contains(user) && !author.equals(user)) {
             repostedBy.add(user);
             repostCount++;
-        } {
-            throw new IllegalArgumentException(" Un utilisateur ne peut pas re-publier son propre chirp.");
+        } else {
+            throw new IllegalArgumentException(" Le post ne peut pas être publier plusieurs fois par la même personne.");
         }
     }
     public void unrepost(User user) {
         if (repostedBy.contains(user)) {
             repostedBy.remove(user);
             repostCount--;
+        }else {
+            throw new IllegalArgumentException(" Le post ne peut pas être unreposted si il n'est pas déjà reposted.");
         }
     }
 }
