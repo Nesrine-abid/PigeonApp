@@ -65,8 +65,7 @@ public class ChirpTest {
     }
     @Test
     public void testNegativeRepostCount() {
-
-        // User1 tente de un-reposter le chirp
+        // User1 tente de un-reposter un chirp qui n'a pas déjà reposter
         assertThrows(IllegalArgumentException.class, () -> {
             chirp.unrepost(user1);
         });

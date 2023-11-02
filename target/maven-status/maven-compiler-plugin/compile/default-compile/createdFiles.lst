@@ -1,4 +1,5 @@
 Main.class
-Models\User.class
-Repositories\UserRepository.class
-Models\Chirp.class
+Timeline\Timeline.class
+Users\User.class
+Users\UserRepository.class
+Chirps\Chirp.class
